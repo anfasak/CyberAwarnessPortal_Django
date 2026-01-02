@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0D1117;
+            font-family: "Segoe UI", sans-serif;
+            color: #fff;
+        }
+
+        .menu-box {
+            background: #1A1F25;
+            padding: 40px 30px;
+            border-radius: 18px;
+            width: 330px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.25);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #00E5FF;
+            letter-spacing: 1px;
+        }
+
+        .menu-box a {
+            display: block;
+            background: #0F1419;
+            margin: 12px 0;
+            padding: 12px;
+            border-radius: 12px;
+            color: #00E5FF;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px solid #00E5FF33;
+            transition: 0.3s;
+        }
+
+        .menu-box a:hover {
+            background: #00E5FF;
+            color: #0D1117;
+            box-shadow: 0 0 10px #00E5FFAA;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-box">
+        <h2>Admin Dashboard</h2>
+
+        <a href="/ViewContent">View Content</a> 
+        <a href="/Viewlearning">View Learning</a>
+        <a href="/ViewUser">View Users</a>
+        <a href="/ViewFeedback">View Feedback</a>
+        <a href="/ViewComplaint">View Complaints & Reply</a>
+        <a href="{% url 'ViewModules' %}">ViewModules</a>
+    </div>
+</body>
+</html>

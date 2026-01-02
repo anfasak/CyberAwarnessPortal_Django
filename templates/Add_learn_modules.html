@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Content</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #0b1320;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00e5ff;
+            margin-bottom: 30px;
+        }
+
+        table {
+            margin: auto;
+            background-color: #121c2d;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            width: 60%;
+        }
+
+        td {
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #2a3b55;
+            background-color: #0b1320;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #9aa4b2;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #00e5ff;
+            box-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
+        }
+
+        option {
+            background-color: #0b1320;
+            color: #ffffff;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        .description-box {
+            height: 120px;
+        }
+
+        .submit-btn {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        button {
+            background-color: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00bcd4;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🚨 Content</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>Content</td>
+                <td>
+                    <input type="text" name="Content" placeholder="Enter phishing message or content" required>
+                </td>
+            </tr>
+            <tr>
+                <td>Threat Type</td>
+                <td>
+                    <select name="ThreatType" required>
+                        <option value="">-- Select Threat Type --</option>
+                        <option value="Phishing">Phishing</option>
+                        <option value="Fake Website">Fake Website</option>
+                        <option value="Fraud Call">Fraud Call</option>
+                        <option value="Malware Link">Malware Link</option>
+                        <option value="Social Media Scam">Social Media Scam</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>
+                    <textarea name="Description" class="description-box"
+                        placeholder="Describe the issue in detail"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <tr>
+                    <td>Image</td>
+                    <td><input type="file" name="image"></td>
+                </tr>
+                <td>Link</td>
+                <td>
+                    <textarea name="Link" placeholder="Enter  URL" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="submit-btn">
+                    <button type="submit">Submit Report</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

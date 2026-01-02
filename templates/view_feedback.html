@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Feedback</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0D1117;
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00E5FF;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1A1F25;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+        }
+
+        th {
+            background: #0F1419;
+            color: #00E5FF;
+            padding: 14px;
+            font-size: 16px;
+            border-bottom: 1px solid #00E5FF33;
+        }
+
+        td {
+            padding: 14px;
+            color: #E6E6E6;
+            border-bottom: 1px solid #222;
+        }
+
+        tr:hover {
+            background: #11161C;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Feedback History</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Feedback</th>
+            <th>Date</th>
+        </tr>
+
+        {% for i in a %}
+        <tr>
+            <td align="center">{{i.User}}</td>
+            <td align="center">{{i.Rating}}</td>
+            <td align="center">{{i.Feedback}}</td>
+            <td align="center">{{i.Date}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</body>
+</html>

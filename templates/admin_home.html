@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #0D1117;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #1A1F25;
+            padding: 40px 50px;
+            border-radius: 18px;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+            text-align: center;
+            width: 350px;
+        }
+
+        h2 {
+            color: #00E5FF;
+            margin-bottom: 32px;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .menu a {
+            display: block;
+            margin: 15px 0;
+            padding: 12px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            background: #0F1419;
+            border: 1px solid #00E5FF44;
+            color: #00E5FF;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .menu a:hover {
+            background: #00E5FF;
+            color: #0D1117;
+            box-shadow: 0 0 10px #00E5FFAA;
+            transform: translateY(-2px);
+        }
+
+        /* Logout Button Special Styling */
+        .logout {
+            margin-top: 25px;
+            background: #E53935;
+            border: 1px solid #E5393566 !important;
+            color: white !important;
+        }
+
+        .logout:hover {
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff4040;
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Admin Panel</h2>
+
+        <div class="menu">
+            <a href="{% url 'add_manage_learn' %}">Add and Manage Content</a>
+            <a href="{% url 'ViewUser' %}">View Users</a>
+            <a href="{% url 'ViewFeedback' %}">View Feedback</a>
+            <a href="{% url 'ViewComplaint' %}">View Complaints & Replies</a>
+            <a href="/ManageLInk/">Manage LInk</a>
+            <a href="{% url 'ViewQuiz' %}">View Quiz</a>
+            <a href="{% url 'AddQuiz' %}">Add Quiz</a>
+
+            <!-- Optional: Logout Button -->
+            <a href="/LoginPage/" class="logout">Logout</a>
+        </div>
+    </div>
+
+</body>
+</html>

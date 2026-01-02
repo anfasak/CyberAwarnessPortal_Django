@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Quiz Questions</title>
+
+    <style>
+        body {
+            background: #0D1117;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00E5FF;
+            margin-bottom: 25px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #161B22;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,229,255,0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #00E5FF33;
+            text-align: center;
+        }
+
+        th {
+            color: #00E5FF;
+            background: #0F1419;
+        }
+
+        td {
+            font-size: 14px;
+            color: #C9D1D9;
+        }
+
+        tr:hover {
+            background: #0D1117;
+        }
+
+        .delete-btn {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .delete-btn:hover {
+            background: #e60000;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Quiz Questions</h2>
+
+<div class="container">
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Question</th>
+            <th>Option A</th>
+            <th>Option B</th>
+            <th>Option C</th>
+            <th>Answer</th>
+            <th>Action</th>
+            <th> <a href="/AddQuiz"> <button>add</button></a></th>
+        </tr>
+
+        <!-- Django loop starts -->
+        {% for i in questions %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.question }}</td>
+            <td>{{ i.option1 }}</td>
+            <td>{{ i.option2 }}</td>
+            <td>{{ i.option3 }}</td>
+            <td>{{ i.answer}}</td>
+            <td>
+                 <a href="/DeleteQuiz/{{i.id}}"><button>Delete</button></a></td>
+            </td>
+       
+        </tr>
+        {% endfor %}
+        <!-- Django loop ends -->
+    </table>
+</div>
+
+</body>
+</html>

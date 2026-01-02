@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints | Admin</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0D1117;
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00E5FF;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1A1F25;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+        }
+
+        th {
+            background: #0F1419;
+            color: #00E5FF;
+            padding: 14px;
+            font-size: 16px;
+            border-bottom: 1px solid #00E5FF33;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #222;
+            text-align: center;
+        }
+
+        tr:hover {
+            background: #11161C;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #00E5FF55;
+            background: #0F1419;
+            color: #00E5FF;
+            outline: none;
+            width: 180px;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00E5FF;
+            box-shadow: 0 0 10px #00E5FF88;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            margin-left: 8px;
+            background: #00E5FF;
+            color: #0D1117;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0D1117;
+            color: #00E5FF;
+            border: 1px solid #00E5FF;
+            box-shadow: 0 0 10px #00E5FFAA;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Complaint Management</h2>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Complaint</th>
+            <th>Date</th>
+            <th>Reply</th>
+        </tr>
+
+        {% for i in f %}
+        <tr>
+            <td>{{ i.User}}</td>
+            <td>{{ i.Complaint }}</td>
+            <td>{{ i.Date }}</td>
+            {% if i.Reply %}
+            <td>{{ i.Reply }}</td>
+            {% else %}
+            <td>
+                <form action="/SendReply/{{i.id}}/" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="Reply" placeholder="Type reply...">
+                    <button type="submit">Reply</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0D1117;
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00E5FF;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1A1F25;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 18px rgba(0, 229, 255, 0.25);
+        }
+
+        th {
+            background: #0F1419;
+            color: #00E5FF;
+            padding: 14px;
+            font-size: 16px;
+            border-bottom: 1px solid #00E5FF44;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #222;
+            color: #E6E6E6;
+        }
+
+        tr:hover {
+            background: #11161C;
+            transition: 0.2s ease-in-out;
+        }
+
+        .empty-row {
+            text-align: center;
+            padding: 20px;
+            color: #AAAAAA;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>User Information</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email ID</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in c %}
+            <tr>
+                <td align="center">{{ i.Name }}</td>
+                <td align="center">{{ i.Emailid }}</td>
+                <td align="center">{{ i.PhoneNumber }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-row">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
