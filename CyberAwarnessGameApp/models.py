@@ -51,3 +51,10 @@ class QuizTable(models.Model):
     option3=models.CharField(max_length=20, blank=True, null=True)
     answer=models.CharField(max_length=20, blank=True, null=True)
     
+
+class ResultTable(models.Model):
+    quiz = models.ForeignKey(QuizTable, on_delete=models.CASCADE)
+    userid = models.ForeignKey(UserTable, on_delete=models.CASCADE, null=True, blank=True)
+    selected_index = models.IntegerField()
+    is_correct = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)

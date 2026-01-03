@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Result Summary</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #0D1117;
+            font-family: "Segoe UI", sans-serif;
+            color: white;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00E5FF;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #161B22;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 25px rgba(0,229,255,0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1A1F25;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        th {
+            background: #0F1419;
+            color: #00E5FF;
+        }
+
+        td {
+            border-bottom: 1px solid #ffffff1a;
+        }
+
+        .score {
+            color: #2ECC71;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Quiz Result Summary</h2>
+
+<div class="container">
+
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Score</th>
+        </tr>
+
+        {% for s in summary %}
+        <tr>
+            <td>{{ s.user.Name|default:s.user.id }}</td>
+            <td class="score">{{ s.correct }} / {{ s.total }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No quiz attempts found</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>

@@ -33,4 +33,14 @@ class LearningTableSerializer(ModelSerializer):
 class LinkTableSerializer(ModelSerializer):
     class Meta:
         model=LinkTable
-        fields=['Modules','Link']    
+        fields=['Modules','Link'] 
+
+class QuizTableSerializers(ModelSerializer):
+    class Meta:
+        model=QuizTable
+        fields='__all__'
+
+class ResultTableSerializers(ModelSerializer):
+    class Meta:
+        model=ResultTable
+        fields='__all__'                   

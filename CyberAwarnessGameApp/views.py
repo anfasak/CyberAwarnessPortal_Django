@@ -130,8 +130,67 @@ class quiz(View):
    def get(self,request):
          c=QuizTable.objects.all()
          return render(request, 'ViewQuiz.html',{'questions':c})
-       
+   
+# from django.views import View
+# from django.shortcuts import render
+# from django.db.models import Count, Q
+# from .models import ResultTable, QuizTable, UserTable
+
+# class ViewResult(View):
+#     def get(self, request):
+#         total_questions = QuizTable.objects.count()
+
+#         users = UserTable.objects.all()
+#         user_results = []
+
+#         for user in users:
+#             results = ResultTable.objects.filter(userid=user)
+
+#             correct_count = results.filter(is_correct=True).count()
+
+#             user_results.append({
+#                 'user': user,
+#                 'correct': correct_count,
+#                 'total': total_questions,
+#                 'results': results
+#             })
+
+#         return render(request, 'ViewQuizResult.html', {
+#             'user_results': user_results
+#         })
+
              
+
+from django.views import View
+from django.shortcuts import render
+from django.db.models import Count
+from .models import ResultTable, QuizTable
+
+class ViewResult(View):
+    def get(self, request):
+        total_questions = QuizTable.objects.count()
+
+        # 🔹 Get only users who attended quiz
+        user_results = (
+            ResultTable.objects
+            .values('userid')
+            .annotate(correct=Count('id', filter=models.Q(is_correct=True)))
+        )
+
+        summary = []
+        for ur in user_results:
+            userid = ur['userid']
+            correct = ur['correct']
+
+            summary.append({
+                'user': ResultTable.objects.filter(userid=userid).first().userid,
+                'correct': correct,
+                'total': total_questions
+            })
+
+        return render(request, 'ViewQuizResult.html', {
+            'summary': summary
+        })
 
 
     
@@ -241,4 +300,99 @@ class ViewContentAPI(APIView):
         data = LearningTable.objects.all()
         serializer = LearningTableSerializer(data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+import random
+    
+class ViewQuizAPI(APIView):
+    def get(self, request):
+        quiz = list(QuizTable.objects.all())
+        random.shuffle(quiz)  # 🔥 shuffle questions
+
+        data = []
+
+        for q in quiz:
+            options = [
+                {"text": q.option1, "index": 0},
+                {"text": q.option2, "index": 1},
+                {"text": q.option3, "index": 2},
+                {"text": q.answer, "index": 3},
+            ]
+
+            random.shuffle(options)  # 🔥 shuffle options
+
+            data.append({
+                "quiz_id": q.id,
+                "question": q.question,
+                "options": options,
+            })
+
+        return Response(data, status=status.HTTP_200_OK)
+
+class SubmitResultAPI(APIView):
+    def post(self, request, id):
+        user = UserTable.objects.get(login__id=id)
+
+        quiz_id = request.data.get("quiz_id")
+        selected_index = int(request.data.get("selected_index"))
+
+        quiz = QuizTable.objects.get(id=quiz_id)
+
+        # ✅ FIX: option 4 (index 3) is the correct answer
+        is_correct = selected_index == 3
+
+        ResultTable.objects.create(
+            quiz=quiz,
+            userid=user,
+            selected_index=selected_index,
+            is_correct=is_correct
+        )
+
+        return Response({
+            "message": "Result saved",
+            "selected_index": selected_index,
+            "correct_option": quiz.answer,
+            "is_correct": is_correct
+        }, status=status.HTTP_200_OK)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import ResultTable, QuizTable, UserTable
+
+class ViewResultAPI(APIView):
+    def get(self, request, id):
+        """
+        id = login id of user
+        """
+
+        # 🔹 Get user
+        user = UserTable.objects.get(login__id=id)
+
+        # 🔹 Total questions in quiz table
+        total_questions = QuizTable.objects.count()
+
+        # 🔹 Results of this user
+        user_results = ResultTable.objects.filter(userid=user)
+
+        # 🔹 Correct answers count
+        correct_answers = user_results.filter(is_correct=True).count()
+
+        # 🔹 Prepare detailed result list
+        result_list = []
+        for r in user_results:
+            result_list.append({
+                "quiz_id": r.quiz.id,
+                "question": r.quiz.question,
+                "selected_index": r.selected_index,
+                "is_correct": r.is_correct,
+                "created_at": r.created_at,
+            })
+
+        return Response({
+            "total_questions": total_questions,
+            "attempted": user_results.count(),
+            "correct_answers": correct_answers,
+            "results": result_list,
+        }, status=status.HTTP_200_OK)
 
