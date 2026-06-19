@@ -44,3 +44,13 @@ class ResultTableSerializers(ModelSerializer):
     class Meta:
         model=ResultTable
         fields='__all__'                   
+
+class UserSerializers(ModelSerializer):
+    class Meta:
+        model=UserTable
+        fields='__all__'           
+
+class CertificateSerializers(ModelSerializer):
+    class Meta:
+        model=CertificateTable
+        fields='__all__'           

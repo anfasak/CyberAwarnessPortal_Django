@@ -1,87 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Quiz Result Summary</title>
+{% extends "admin_home.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            padding: 40px;
-            background: #0D1117;
-            font-family: "Segoe UI", sans-serif;
-            color: white;
-        }
+{% block content %}
 
-        h2 {
-            text-align: center;
-            color: #00E5FF;
-            margin-bottom: 30px;
-        }
+<style>
+    /* ===== Page Title ===== */
+    h2 {
+        width: 95%;
+        margin: 0 auto 25px auto;
+        font-size: 24px;
+        font-weight: 600;
+        color: #0f172a;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: #161B22;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0 0 25px rgba(0,229,255,0.25);
-        }
+    /* ===== Container ===== */
+    .container {
+        width: 95%;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1A1F25;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    /* ===== Table ===== */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
+    /* ===== Table Header ===== */
+    th {
+        background: #f8fafc;
+        color: #64748b;
+        padding: 16px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* ===== Table Body ===== */
+    td {
+        padding: 16px;
+        font-size: 14px;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ===== Row Hover ===== */
+    tbody tr {
+        transition: 0.2s ease;
+    }
+
+    tbody tr:hover {
+        background: #f1f5ff;
+    }
+
+    /* ===== Score Badge ===== */
+    .score {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #ecfdf5;
+        color: #10b981;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    /* ===== Buttons ===== */
+    .btn-generate,
+    .btn-download {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        text-decoration: none;
+        transition: 0.2s ease;
+        margin-right: 6px;
+    }
+
+    /* Generate Button */
+    .btn-generate {
+        background: #4f46e5;
+        color: #ffffff;
+    }
+
+    .btn-generate:hover {
+        background: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    /* Download Button */
+    .btn-download {
+        background: #10b981;
+        color: #ffffff;
+    }
+
+    .btn-download:hover {
+        background: #059669;
+        transform: translateY(-1px);
+    }
+
+    /* Icon Only Button */
+    .icon-only {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+
+    /* ===== Empty State ===== */
+    .empty {
+        text-align: center;
+        padding: 40px;
+        font-size: 14px;
+        color: #94a3b8;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
         th, td {
-            padding: 14px;
-            text-align: center;
-            font-size: 15px;
+            padding: 12px;
+            font-size: 13px;
         }
-
-        th {
-            background: #0F1419;
-            color: #00E5FF;
-        }
-
-        td {
-            border-bottom: 1px solid #ffffff1a;
-        }
-
-        .score {
-            color: #2ECC71;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+    }
+</style>
 
 <h2>Quiz Result Summary</h2>
 
 <div class="container">
-
     <table>
         <tr>
+            <th>SI.No</th>
             <th>User</th>
             <th>Score</th>
+            <th>Certificate</th>
         </tr>
 
         {% for s in summary %}
         <tr>
+            <td>{{ forloop.counter }}</td>
             <td>{{ s.user.Name|default:s.user.id }}</td>
-            <td class="score">{{ s.correct }} / {{ s.total }}</td>
+            <td>
+                <span class="score">
+                    {{ s.correct }} / {{ s.total }}
+                </span>
+            </td>
+            <td>
+                {% if s.cert_exists %}
+                <a href="/GetCertificate/{{ s.user.id }}/" class="btn-download">
+                    Download Certificate
+                </a>
+                <a href="/GenerateCertificate/{{ s.user.id }}/" class="btn-generate icon-only" title="Regenerate">
+                    🔄
+                </a>
+                {% else %}
+                <a href="/GenerateCertificate/{{ s.user.id }}/" class="btn-generate">
+                    Generate Certificate
+                </a>
+                {% endif %}
+            </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="2">No quiz attempts found</td>
+            <td colspan="3" class="empty">
+                No quiz attempts found
+            </td>
         </tr>
         {% endfor %}
     </table>
-
 </div>
 
-</body>
-</html>
+{% endblock %}

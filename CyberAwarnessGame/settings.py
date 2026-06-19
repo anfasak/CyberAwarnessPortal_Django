@@ -118,8 +118,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# STATIC_URL = 'static/'
+# STATICFIELS_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = 'static/'
-STATICFIELS_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 
 MEDIA_URL='media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
@@ -129,3 +135,21 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'cyberguard252@gmail.com'
+EMAIL_HOST_PASSWORD = 'kysm nnud yckg mpfg'    
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider's SMTP server
+EMAIL_PORT = 587  # Typically 587 for TLS, or 465 for SSL
+EMAIL_USE_TLS = True  # Use TLS (True if PORT=587)
+EMAIL_USE_SSL = False  # Set True if PORT=465
+EMAIL_HOST_USER = 'cyberguard252@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'fjju ojzy apmw ndcx'

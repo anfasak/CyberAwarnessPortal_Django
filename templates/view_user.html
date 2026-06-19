@@ -1,71 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Details</title>
+{% extends "admin_home.html" %}
+{% block content %}
 
-    <style>
-        body {
-            margin: 0;
-            padding: 40px;
-            background: #0D1117;
-            font-family: "Segoe UI", sans-serif;
-            color: white;
-        }
+<style>
 
-        h2 {
-            text-align: center;
-            color: #00E5FF;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-        }
+/* ===== Page Header ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1A1F25;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 18px rgba(0, 229, 255, 0.25);
-        }
+.page-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #0f172a;
+}
 
-        th {
-            background: #0F1419;
-            color: #00E5FF;
-            padding: 14px;
-            font-size: 16px;
-            border-bottom: 1px solid #00E5FF44;
-        }
+.search-box input {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    font-size: 14px;
+    width: 240px;
+    background: #ffffff;
+    transition: 0.3s;
+}
 
-        td {
-            padding: 14px;
-            border-bottom: 1px solid #222;
-            color: #E6E6E6;
-        }
+.search-box input::placeholder {
+    color: #94a3b8;
+}
 
-        tr:hover {
-            background: #11161C;
-            transition: 0.2s ease-in-out;
-        }
+.search-box input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+}
 
-        .empty-row {
-            text-align: center;
-            padding: 20px;
-            color: #AAAAAA;
-        }
-    </style>
-</head>
+/* ===== Card Wrapper ===== */
+.table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
 
-<body>
+/* ===== Table ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    <h2>User Information</h2>
+thead {
+    background: #f8fafc;
+}
 
+th {
+    padding: 16px;
+    text-align: left;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+td {
+    padding: 18px 16px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+tbody tr {
+    transition: 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f1f5ff;
+}
+
+/* ===== Avatar Circle ===== */
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 12px;
+}
+
+.name-cell {
+    display: flex;
+    align-items: center;
+}
+
+/* ===== Empty State ===== */
+.empty-row {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 15px;
+}
+
+/* ===== Responsive ===== */
+@media(max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+}
+
+</style>
+
+
+<!-- Page Header -->
+<div class="page-header">
+    <h2>User Management</h2>
+    <div class="search-box">
+        <input type="text" placeholder="Search users...">
+    </div>
+</div>
+
+
+<!-- Table Card -->
+<div class="table-card">
     <table>
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Email ID</th>
+                <th>SI.No</th>
+                <th>User</th>
+                <th>Email Address</th>
                 <th>Phone Number</th>
             </tr>
         </thead>
@@ -73,17 +150,28 @@
         <tbody>
             {% for i in c %}
             <tr>
-                <td align="center">{{ i.Name }}</td>
-                <td align="center">{{ i.Emailid }}</td>
-                <td align="center">{{ i.PhoneNumber }}</td>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    
+                    <div class="name-cell">
+                        <div class="avatar">
+                            {{ i.Name|first }}
+                        </div>
+                        {{ i.Name }}
+                    </div>
+                </td>
+                <td>{{ i.Emailid }}</td>
+                <td>{{ i.PhoneNumber }}</td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="3" class="empty-row">No users found.</td>
+                <td colspan="3" class="empty-row">
+                    No users found in the system.
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
 
-</body>
-</html>
+{% endblock %}

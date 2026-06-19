@@ -1,11 +1,25 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
+
+from CyberAwarnessGame import settings
 
 from .serializers import *
 
 from .forms import *
 from CyberAwarnessGameApp.models import *
+
+from django.core.validators import validate_email
+import random
+from django.core.mail import send_mail
+import os
+
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
+import io
 
 
 class LoginPage(View):
@@ -97,10 +111,27 @@ class AddLearning(View):
         return render(request,'Add_learn_modules.html')
     
     def post(self, request):
-            d=ContentForm(request.POST,request.FILES)
-            if d.is_valid():
-                d.save()
-                return redirect('/add_manage_learn')
+            print('-------------', request.POST)
+            print('-------------', request.FILES)
+            # d=ContentForm(request.POST,request.FILES)
+            # if d.is_valid():
+            #     d.save()
+            #     return redirect('/add_manage_learn')
+            Content = request.POST['Content']
+            ThreatType = request.POST['ThreatType']
+            Description = request.POST['Description']
+            Link = request.POST['Link']
+            image = request.FILES['image']
+            obj = LearningTable()
+            obj.Content=Content
+            obj.ThreatType=ThreatType
+            obj.Description=Description
+            obj.Link=Link
+            obj.image=image
+            obj.save()
+
+
+            return redirect('/add_manage_learn')
 
 class ManageLink(View):
      def get(self, request):
@@ -114,6 +145,13 @@ class ManageQuiz(View):
     def post(self, request):
          r=QuizForm(request.POST)
          if r.is_valid():
+             # Enforce 100 question limit
+             count = QuizTable.objects.count()
+             if count >= 100:
+                 oldest = QuizTable.objects.order_by('id').first()
+                 if oldest:
+                     oldest.delete()
+             
              r.save()
              return redirect('/ViewQuiz/')
          
@@ -181,16 +219,40 @@ class ViewResult(View):
         for ur in user_results:
             userid = ur['userid']
             correct = ur['correct']
+            
+            user_obj = ResultTable.objects.filter(userid=userid).first().userid
+            cert_exists = CertificateTable.objects.filter(Userid=user_obj).exists()
 
             summary.append({
-                'user': ResultTable.objects.filter(userid=userid).first().userid,
+                'user': user_obj,
                 'correct': correct,
-                'total': total_questions
+                'total': total_questions,
+                'cert_exists': cert_exists
             })
 
         return render(request, 'ViewQuizResult.html', {
             'summary': summary
         })
+
+from django.shortcuts import render, redirect
+from .models import *
+
+# ================= ADMIN DASHBOARD =================
+def admin_dashboard(request):
+
+    user_count = UserTable.objects.count()
+    feedback_count = FeedbackTable.objects.count()
+    complaint_count = ComplaintTable.objects.count()
+    quiz_result_count = ResultTable.objects.count()
+
+    context = {
+        'user_count': user_count,
+        'feedback_count': feedback_count,
+        'complaint_count': complaint_count,
+        'quiz_result_count': quiz_result_count,
+    }
+
+    return render(request, 'admin_home.html', context)   
 
 
     
@@ -395,4 +457,375 @@ class ViewResultAPI(APIView):
             "correct_answers": correct_answers,
             "results": result_list,
         }, status=status.HTTP_200_OK)
+
+class ViewProfileAPI(APIView):
+      def get(self, request,id):
+        data = UserTable.objects.filter(login__id=id)
+        serializer = UserSerializers(data, many=True)
+        print('------------>', serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+      
+    
+class EditProfileAPI(APIView):
+    def post(self, request, id):
+        print('--------------', request.data)
+        user = UserTable.objects.get(login__id=id)
+
+        serializer = UserSerializers(
+            user,
+            data=request.data,
+            partial=True   # ✅ IMPORTANT
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendOTP(APIView):
+    def get(self, request):
+        email = request.data.get('email')
+        print('-----------', email)
+        try:
+            validate_email(email)
+
+        except:
+            return Response(
+                {
+                    'message': "Invalid Email",
+                },
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        existing_email = LoginTable.objects.filter(username=email).first()
+
+        if existing_email:
+            return Response(
+                {
+                    "message": "Email already exist"
+                },
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        otp = random.randint(100000, 999999)
+        print("otp", otp)
+        send_mail(
+            subject= " Your OTP for registering to cyber awareness ",
+            message= f"Your OTP to register mil for the app is : {otp}",
+            from_email= settings.EMAIL_HOST_USER,
+            recipient_list=[email]
+        )
+        print("--------------------------")
+
+        OTPModel.objects.update_or_create(
+            email = email,
+            otp = otp,
+            otp_verified = False
+        )
+
+        return Response({"message":"OTP sent successfully"}, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+
+        email = request.data.get('email')
+        otp = request.data.get('otp')
+
+        try:
+            record = OTPModel.objects.get(email=email, otp=otp)
+        except ValidationError:
+            return Response({'message': "Invalid OTP"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        record.otp_verified = True
+
+        record.save()
+
+        return Response(data=record.otp_verified, status=status.HTTP_200_OK)
+    
+
+class ViewChatbotHistoryAPI(APIView):
+    """
+    View all chatbot conversations of a user
+    """
+
+    def get(self, request, lid):
+        # Step 1: Validate user
+        try:
+            user = UserTable.objects.get(login__id=lid)
+        except UserTable.DoesNotExist:
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Step 2: Fetch chat history
+        chats = ChatHistory.objects.filter(
+            user=user
+        ).order_by("-created_at")
+
+        # Step 3: Serialize manually (simple & fast)
+        data = []
+        for chat in chats:
+            data.append({
+                "id": chat.id,
+                "user_input": chat.user_input,
+                "ai_response": chat.ai_response,
+                "created_at": chat.created_at
+            })
+
+        return Response(
+            {
+                "user": user.Name,
+                "total_chats": chats.count(),
+                "chat_history": data
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class GenerateCertificate(View):
+    def get(self, request, id):
+        user = get_object_or_404(UserTable, id=id)
+        
+        # Calculate score
+        results = ResultTable.objects.filter(userid=user)
+        correct_count = results.filter(is_correct=True).count()
+        total_questions = QuizTable.objects.count()
+
+        # Ensure the greatest number is after the /
+        display_score = min(correct_count, total_questions)
+        display_total = max(correct_count, total_questions)
+        
+        # Create PDF in memory (Landscape)
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=landscape(letter))
+        width, height = landscape(letter)
+        
+        # --- BACKGROUND & BORDERS ---
+        # Outer Border (Navy)
+        p.setStrokeColor(colors.navy)
+        p.setLineWidth(5)
+        p.rect(20, 20, width - 40, height - 40)
+        
+        # Inner Border (Gold)
+        p.setStrokeColor(colors.goldenrod)
+        p.setLineWidth(2)
+        p.rect(35, 35, width - 70, height - 70)
+        
+        # Decorative Corners (Gold)
+        p.setLineWidth(3)
+        # Top-Left
+        p.line(35, height - 100, 35, height - 35)
+        p.line(35, height - 35, 100, height - 35)
+        # Top-Right
+        p.line(width - 100, height - 35, width - 35, height - 35)
+        p.line(width - 35, height - 35, width - 35, height - 100)
+        # Bottom-Left
+        p.line(35, 100, 35, 35)
+        p.line(35, 35, 100, 35)
+        # Bottom-Right
+        p.line(width - 100, 35, width - 35, 35)
+        p.line(width - 35, 35, width - 35, 100)
+        
+        # --- TITLE SECTION ---
+        p.setFillColor(colors.navy)
+        p.setFont("Helvetica-Bold", 42)
+        p.drawCentredString(width / 2, height - 130, "CERTIFICATE")
+        
+        p.setFont("Helvetica", 18)
+        p.drawCentredString(width / 2, height - 160, "OF PARTICIPATION")
+        
+        # --- MAIN TEXT ---
+        p.setStrokeColor(colors.black)
+        p.setLineWidth(0.5)
+        p.line(width/4, height - 180, 3*width/4, height - 180)
+        
+        p.setFillColor(colors.black)
+        p.setFont("Helvetica", 20)
+        p.drawCentredString(width / 2, height - 240, "This is to certify that")
+        
+        # Name
+        p.setFillColor(colors.darkblue)
+        p.setFont("Times-BoldItalic", 45)
+        p.drawCentredString(width / 2, height - 310, user.Name or "Participant")
+        
+        # Divider Line under Name
+        p.setStrokeColor(colors.goldenrod)
+        p.setLineWidth(1)
+        p.line(width/4, height - 325, 3*width/4, height - 325)
+        
+        # Achievement Message
+        p.setFillColor(colors.black)
+        p.setFont("Helvetica", 18)
+        p.drawCentredString(width / 2, height - 370, "has successfully participated in the")
+        p.setFont("Helvetica-Bold", 22)
+        p.drawCentredString(width / 2, height - 400, "CYBER AWARENESS CHALLENGE")
+        
+        # Score Information
+        p.setFont("Helvetica-Oblique", 16)
+        p.drawCentredString(width / 2, height - 440, f"Achieving a score of {display_score} out of {display_total}")
+        
+        # --- FOOTER SECTION (Signatures & Date) ---
+        # Date
+        from datetime import date
+        p.setFont("Helvetica", 14)
+        p.drawString(100, 110, f"Date: {date.today().strftime('%B %d, %Y')}")
+        p.line(100, 105, 250, 105) # Date underline
+        
+        # Signature Lines
+        p.drawCentredString(width - 175, 110, "Authorized Signature")
+        p.line(width - 250, 105, width - 100, 105)
+        p.setFont("Helvetica-Oblique", 12)
+        p.drawCentredString(width - 175, 90, "Cyber Awareness Program Director")
+        
+        # Seal Placment
+        p.setStrokeColor(colors.goldenrod)
+        p.setFillColor(colors.gold)
+        p.circle(width/2, 100, 40, stroke=1, fill=1)
+        p.setFillColor(colors.navy)
+        p.setFont("Helvetica-Bold", 10)
+        p.drawCentredString(width/2, 105, "OFFICIAL")
+        p.drawCentredString(width/2, 95, "SEAL")
+        
+        # --- FINALIZATION ---
+        p.showPage()
+        p.save()
+        
+        # Save to Model
+        pdf_data = buffer.getvalue()
+        file_name = f"certificate_{user.id}_{date.today().strftime('%Y%m%d')}.pdf"
+        
+        # Link to the first result found for this user if exists (optional refinement)
+        first_result = results.first()
+        
+        cert_obj = CertificateTable.objects.create(
+            Userid=user,
+            resultid=first_result
+        )
+        cert_obj.certificate.save(file_name, ContentFile(pdf_data))
+        cert_obj.save()
+        
+        buffer.close()
+        
+        # Redirect back with success message
+        return HttpResponse(f'''<script>alert("Landscape Certificate of Participation generated for {user.Name}");window.location='/QuizResult/'</script>''')
+
+# class GenerateCertificate(View):
+#     def get(self, request, id):
+#         user = get_object_or_404(UserTable, id=id)
+        
+#         # Calculate score
+#         results = ResultTable.objects.filter(userid=user)
+#         correct_count = results.filter(is_correct=True).count()
+#         total_questions = QuizTable.objects.count()
+
+#         display_score = min(correct_count, total_questions)
+#         display_total = max(correct_count, total_questions)
+        
+#         buffer = io.BytesIO()
+#         p = canvas.Canvas(buffer, pagesize=landscape(letter))
+#         width, height = landscape(letter)
+
+#         # ---- CERTIFICATE BACKGROUND IMAGE ----
+#         import os
+#         from django.conf import settings
+        
+#         image_path = os.path.join(settings.BASE_DIR.parent, "static/certificate/certificate_template.jpg")
+#         # Draw certificate template image
+#         p.drawImage(image_path, 0, 0, width=width, height=height)
+
+#         # ---- USER NAME ----
+#         p.setFillColor(colors.black)
+#         p.setFont("Helvetica-Bold", 36)
+#         p.drawCentredString(width/2, height/2 + 30, user.Name or "Participant")
+
+#         # ---- DATE ----
+#         from datetime import date
+#         today = date.today().strftime("%B %d, %Y")
+
+#         p.setFont("Helvetica", 16)
+#         p.drawCentredString(width/2 - 200, height/2 - 120, today)
+
+#         # ---- CERTIFICATE NUMBER ----
+#         cert_no = f"CG-{user.id}-{date.today().strftime('%Y%m%d')}"
+
+#         p.setFont("Helvetica", 16)
+#         p.drawCentredString(width/2 + 200, height/2 - 120, cert_no)
+
+#         # ---- FINALIZE PDF ----
+#         p.showPage()
+#         p.save()
+        
+#         pdf_data = buffer.getvalue()
+#         file_name = f"certificate_{user.id}_{date.today().strftime('%Y%m%d')}.pdf"
+        
+#         first_result = results.first()
+        
+#         cert_obj = CertificateTable.objects.create(
+#             Userid=user,
+#             resultid=first_result
+#         )
+#         cert_obj.certificate.save(file_name, ContentFile(pdf_data))
+#         cert_obj.save()
+        
+#         buffer.close()
+        
+#         return HttpResponse(f'''<script>alert("Certificate generated for {user.Name}");window.location='/QuizResult/'</script>''')
+
+class GetCertificate(View):
+    def get(self, request, id):
+        user = get_object_or_404(UserTable, id=id)
+        cert = CertificateTable.objects.filter(Userid=user).order_by('-id').first()
+        
+        if cert and cert.certificate:
+            return redirect(cert.certificate.url)
+        else:
+            return HttpResponse('''<script>alert("No certificate found for this user");window.location='/QuizResult/'</script>''')
+
+
+class GetCertificateAPI(APIView):
+    def get(self, request,id):
+        data = CertificateTable.objects.filter(Userid__login=id)
+        serializer = CertificateSerializers(data, many=True)
+        print('------------>', serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.contrib import messages
+
+
+class ForgetPassword(APIView):
+    def post(self, request):
+        print('-----------------', request.data)
+        email = request.data.get('email')
+
+        if not email:
+            return Response({'message': "Email is required"},status=status.HTTP_401_UNAUTHORIZED)
+
+        # List of user tables to check
+        user_tables = [UserTable]
+
+        for table in user_tables:
+            try:
+                user = table.objects.get(Emailid=email)
+                login_obj = get_object_or_404(LoginTable, id=user.login.id)
+
+                # Send email (Consider replacing this with a password reset link)
+                send_mail(
+                    'Password Recovery',
+                    f'Your Account Password is: {login_obj.password}',
+                    'cyberguard252@gmail.com',
+                    [email],
+                )
+
+                messages.success(request, f'Password sent to {email}.')
+                return Response(status=status.HTTP_200_OK)
+
+            except table.DoesNotExist:
+                continue  # Check the next table
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 

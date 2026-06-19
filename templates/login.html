@@ -2,68 +2,178 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
 
     <style>
-        body {
+        * {
             margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #0D1117;
+            padding: 0;
+            box-sizing: border-box;
             font-family: "Segoe UI", sans-serif;
-            color: #fff;
         }
 
-        .menu-box {
-            background: #1A1F25;
-            padding: 40px 30px;
-            border-radius: 18px;
-            width: 330px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.25);
+        body {
+            display: flex;
+            height: 100vh;
+            background: #F1F5F9;
+            color: #0F172A;
         }
 
-        h2 {
-            margin-bottom: 25px;
-            color: #00E5FF;
-            letter-spacing: 1px;
+        .sidebar {
+            width: 240px;
+            background: #FFFFFF;
+            padding: 25px 20px;
+            border-right: 1px solid #E2E8F0;
         }
 
-        .menu-box a {
+        .sidebar h2 {
+            margin-bottom: 30px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sidebar a {
             display: block;
-            background: #0F1419;
-            margin: 12px 0;
-            padding: 12px;
-            border-radius: 12px;
-            color: #00E5FF;
             text-decoration: none;
-            font-size: 16px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
-            border: 1px solid #00E5FF33;
-            transition: 0.3s;
+            color: #334155;
         }
 
-        .menu-box a:hover {
-            background: #00E5FF;
-            color: #0D1117;
-            box-shadow: 0 0 10px #00E5FFAA;
+        .sidebar a:hover {
+            background: #EEF2FF;
+            color: #4F46E5;
         }
+
+        .main {
+            flex: 1;
+            padding: 30px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .admin-circle {
+            width: 35px;
+            height: 35px;
+            background: #4F46E5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .welcome {
+            background: linear-gradient(90deg, #4F46E5, #6366F1);
+            padding: 25px;
+            border-radius: 14px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        /* ===== NEW STATS SECTION ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h5 {
+            font-size: 13px;
+            color: #64748B;
+            margin-bottom: 8px;
+        }
+
+        .stat-card h2 {
+            font-size: 22px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #0F172A;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
     </style>
 </head>
 
 <body>
-    <div class="menu-box">
-        <h2>Admin Dashboard</h2>
 
-        <a href="/ViewContent">View Content</a> 
-        <a href="/Viewlearning">View Learning</a>
-        <a href="/ViewUser">View Users</a>
-        <a href="/ViewFeedback">View Feedback</a>
-        <a href="/ViewComplaint">View Complaints & Reply</a>
-        <a href="{% url 'ViewModules' %}">ViewModules</a>
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="/ViewUser">View Users</a>
+    <a href="/ViewFeedback">View Feedback</a>
+    <a href="/ViewComplaint">View Complaints</a>
+</div>
+
+<div class="main">
+
+    <div class="topbar">
+        <h1>Dashboard</h1>
+        <div class="admin-circle">A</div>
     </div>
+
+    <div class="welcome">
+        <h3>Welcome Back, Admin 👋</h3>
+        <p>Manage your cyber awareness portal from here.</p>
+    </div>
+
+    <!-- 🔥 THIS WAS MISSING -->
+    <div class="stats">
+        <div class="stat-card">
+            <h5>USERS</h5>
+            <h2>{{ user_count }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h5>FEEDBACK</h5>
+            <h2>{{ feedback_count }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h5>COMPLAINTS</h5>
+            <h2>{{ complaint_count }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h5>QUIZ RESULTS</h5>
+            <h2>{{ quiz_result_count }}</h2>
+        </div>
+    </div>
+
+    <div class="menu-grid">
+        <a href="/ViewUser" class="card">
+            <h4>View Users</h4>
+            <p>Manage registered accounts</p>
+        </a>
+    </div>
+
+</div>
+
 </body>
 </html>

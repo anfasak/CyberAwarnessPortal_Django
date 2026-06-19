@@ -1,114 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Quiz Questions</title>
+{% extends "admin_home.html" %}
 
-    <style>
-        body {
-            background: #0D1117;
-            font-family: Arial, sans-serif;
-            color: white;
-            padding: 30px;
-        }
+{% block content %}
 
-        h2 {
-            text-align: center;
-            color: #00E5FF;
-            margin-bottom: 25px;
-        }
+<style>
 
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: #161B22;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,229,255,0.25);
-        }
+/* ===== Page Header ===== */
+.page-header {
+    width: 95%;
+    margin: 0 auto 25px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.page-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #0f172a;
+}
 
-        th, td {
-            padding: 14px;
-            border-bottom: 1px solid #00E5FF33;
-            text-align: center;
-        }
+/* ===== Add Button ===== */
+.add-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    text-decoration: none;
+}
 
-        th {
-            color: #00E5FF;
-            background: #0F1419;
-        }
+.add-btn:hover {
+    background: #4338ca;
+}
 
-        td {
-            font-size: 14px;
-            color: #C9D1D9;
-        }
+/* ===== Card Wrapper ===== */
+.table-wrapper {
+    width: 95%;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
 
-        tr:hover {
-            background: #0D1117;
-        }
+/* ===== Table ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        .delete-btn {
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 7px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-        }
+thead {
+    background: #f8fafc;
+}
 
-        .delete-btn:hover {
-            background: #e60000;
-        }
+th {
+    padding: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-        .empty {
-            text-align: center;
-            color: #888;
-            padding: 20px;
-        }
-    </style>
-</head>
-<body>
+td {
+    padding: 16px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
 
-<h2>Quiz Questions</h2>
+tbody tr {
+    transition: 0.2s ease;
+}
 
-<div class="container">
+tbody tr:hover {
+    background: #f1f5ff;
+}
+
+/* ===== Action Buttons ===== */
+.delete-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #ef4444;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* ===== Question Column Width ===== */
+.question-cell {
+    max-width: 300px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    th, td {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .question-cell {
+        max-width: 180px;
+    }
+}
+
+</style>
+
+
+<div class="page-header">
+    <h2>Quiz Questions</h2>
+
+    <a href="/AddQuiz" class="add-btn">
+        + Add Question
+    </a>
+</div>
+
+
+<div class="table-wrapper">
     <table>
-        <tr>
-            <th>#</th>
-            <th>Question</th>
-            <th>Option A</th>
-            <th>Option B</th>
-            <th>Option C</th>
-            <th>Answer</th>
-            <th>Action</th>
-            <th> <a href="/AddQuiz"> <button>add</button></a></th>
-        </tr>
+        <thead>
+            <tr>
+                <th>SI.No</th>
+                <th>Question</th>
+                <th>Option A</th>
+                <th>Option B</th>
+                <th>Option C</th>
+                <th>Answer</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-        <!-- Django loop starts -->
-        {% for i in questions %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ i.question }}</td>
-            <td>{{ i.option1 }}</td>
-            <td>{{ i.option2 }}</td>
-            <td>{{ i.option3 }}</td>
-            <td>{{ i.answer}}</td>
-            <td>
-                 <a href="/DeleteQuiz/{{i.id}}"><button>Delete</button></a></td>
-            </td>
-       
-        </tr>
-        {% endfor %}
-        <!-- Django loop ends -->
+        <tbody>
+            {% for i in questions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="question-cell">{{ i.question }}</td>
+                <td>{{ i.option1 }}</td>
+                <td>{{ i.option2 }}</td>
+                <td>{{ i.option3 }}</td>
+                <td><strong>{{ i.answer }}</strong></td>
+                <td>
+                    <a href="/DeleteQuiz/{{ i.id }}">
+                        <button class="delete-btn">Delete</button>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center; padding:40px; color:#94a3b8;">
+                    No quiz questions available.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 
-</body>
-</html>
+{% endblock %}

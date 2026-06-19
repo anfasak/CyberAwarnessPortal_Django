@@ -1,94 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Learning Search</title>
+{% extends "admin_home.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            padding: 30px;
-            background: linear-gradient(135deg, #0D1117, #111827);
-            font-family: "Segoe UI", Tahoma, sans-serif;
-            color: #ffffff;
-        }
+{% block content %}
 
-        .search-box {
-            max-width: 1000px;
-            margin: auto;
-            background: #161B22;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.25);
+<style>
+    /* ===== Page Title ===== */
+    h2 {
+        width: 95%;
+        margin: 0 auto 22px auto;
+        color: #020617;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-align: left;
+        font-size: 20px;
+    }
+
+    /* ===== Card Container ===== */
+    .search-box {
+        width: 95%;
+        margin: auto;
+        background: #FFFFFF;
+        padding: 26px;
+        border-radius: 18px;
+        border: 1px solid #E5E7EB;
+        box-shadow:
+            0 10px 25px rgba(2, 6, 23, 0.08),
+            0 2px 6px rgba(2, 6, 23, 0.04);
+    }
+
+    /* ===== Search Form ===== */
+    form {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 26px;
+        flex-wrap: wrap;
+    }
+
+    select {
+        width: 280px;
+        padding: 11px 12px;
+        background: #F8FAFC;
+        color: #020617;
+        border: 1px solid #CBD5E1;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    select:focus {
+        border-color: #0EA5E9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+        background: #FFFFFF;
+    }
+
+    input[type="submit"] {
+        padding: 11px 26px;
+        background: #0EA5E9;
+        border: none;
+        border-radius: 10px;
+        color: #FFFFFF;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    input[type="submit"]:hover {
+        background: #0284C7;
+        transform: translateY(-1px);
+    }
+
+    /* ===== Video Card ===== */
+    .video-card {
+        background: #FFFFFF;
+        padding: 18px;
+        border-radius: 16px;
+        margin-bottom: 26px;
+        border: 1px solid #E5E7EB;
+        box-shadow:
+            0 8px 18px rgba(2, 6, 23, 0.06);
+    }
+
+    iframe {
+        width: 100%;
+        height: 380px;
+        border-radius: 14px;
+        border: 1px solid #E5E7EB;
+        background: #000;
+    }
+
+    /* ===== Empty State ===== */
+    .no-data {
+        text-align: center;
+        color: #64748B;
+        margin-top: 32px;
+        font-size: 14px;
+        padding: 20px 0;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+        iframe {
+            height: 240px;
         }
 
         h2 {
-            text-align: center;
-            color: #00E5FF;
-            margin-bottom: 30px;
-            font-size: 26px;
+            font-size: 18px;
         }
+    }
+</style>
 
-        form {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-        }
-
-        select {
-            width: 280px;
-            padding: 12px;
-            background: #0D1117;
-            color: white;
-            border: 1px solid #00E5FF55;
-            border-radius: 10px;
-        }
-
-        input[type="submit"] {
-            padding: 12px 30px;
-            background: #00E5FF;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .video-card {
-            background: #0D1117;
-            padding: 18px;
-            border-radius: 14px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 18px rgba(0, 229, 255, 0.25);
-        }
-
-        iframe {
-            width: 100%;
-            height: 380px;
-            border-radius: 12px;
-            border: 2px solid #00E5FF33;
-        }
-
-        .no-data {
-            text-align: center;
-            color: gray;
-            margin-top: 40px;
-        }
-
-        @media (max-width: 768px) {
-            iframe {
-                height: 240px;
-            }
-        }
-    </style>
-</head>
-
-<body>
+<h2>▶ YouTube Learning Search</h2>
 
 <div class="search-box">
-    <h2>▶ YouTube Learning Search</h2>
 
     <form method="get">
         <select name="ThreatType">
@@ -114,7 +139,7 @@
     {% empty %}
     <div class="no-data">No videos found</div>
     {% endfor %}
+
 </div>
 
-</body>
-</html>
+{% endblock %}

@@ -9,59 +9,56 @@
         body {
             margin: 0;
             padding: 40px;
-            background-color: #0b1320;
+            background-color: #F8FAFC;
             font-family: "Segoe UI", Arial, sans-serif;
-            color: #ffffff;
+            color: #020617;
         }
 
         h2 {
             text-align: center;
-            color: #00e5ff;
+            color: #0EA5E9;
             margin-bottom: 30px;
         }
 
         table {
             margin: auto;
-            background-color: #121c2d;
+            background-color: #FFFFFF;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
             width: 60%;
+            border: 1px solid #E5E7EB;
         }
 
         td {
             padding: 12px;
             font-size: 15px;
+            color: #020617;
         }
 
         input[type="text"],
-        textarea,
-        select {
+        input[list],
+        textarea {
             width: 100%;
             padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #2a3b55;
-            background-color: #0b1320;
-            color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #CBD5E1;
+            background-color: #F8FAFC;
+            color: #020617;
             font-size: 14px;
         }
 
         input::placeholder,
         textarea::placeholder {
-            color: #9aa4b2;
+            color: #64748B;
         }
 
         input:focus,
-        textarea:focus,
-        select:focus {
+        textarea:focus {
             outline: none;
-            border-color: #00e5ff;
-            box-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
-        }
-
-        option {
-            background-color: #0b1320;
-            color: #ffffff;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+            background: #FFFFFF;
         }
 
         textarea {
@@ -79,17 +76,19 @@
         }
 
         button {
-            background-color: #00e5ff;
-            color: #000;
+            background-color: #10B981;
+            color: #FFFFFF;
             border: none;
-            padding: 10px 25px;
+            padding: 10px 28px;
             font-size: 15px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s ease;
         }
 
         button:hover {
-            background-color: #00bcd4;
+            background-color: #059669;
         }
 
         @media (max-width: 768px) {
@@ -113,19 +112,24 @@
                     <input type="text" name="Content" placeholder="Enter phishing message or content" required>
                 </td>
             </tr>
+
             <tr>
                 <td>Threat Type</td>
                 <td>
-                    <select name="ThreatType" required>
-                        <option value="">-- Select Threat Type --</option>
-                        <option value="Phishing">Phishing</option>
-                        <option value="Fake Website">Fake Website</option>
-                        <option value="Fraud Call">Fraud Call</option>
-                        <option value="Malware Link">Malware Link</option>
-                        <option value="Social Media Scam">Social Media Scam</option>
-                    </select>
+                    <!-- Input with typing + dropdown -->
+                    <input list="threat-options" name="ThreatType" 
+                           placeholder="Select or type Threat Type" required>
+
+                    <datalist id="threat-options">
+                        <option value="Phishing">
+                        <option value="Fake Website">
+                        <option value="Fraud Call">
+                        <option value="Malware Link">
+                        <option value="Social Media Scam">
+                    </datalist>
                 </td>
             </tr>
+
             <tr>
                 <td>Description</td>
                 <td>
@@ -133,22 +137,27 @@
                         placeholder="Describe the issue in detail"></textarea>
                 </td>
             </tr>
+
             <tr>
-                <tr>
-                    <td>Image</td>
-                    <td><input type="file" name="image"></td>
-                </tr>
+                <td>Image</td>
+                <td><input type="file" name="image"></td>
+            </tr>
+
+            <tr>
                 <td>Link</td>
                 <td>
-                    <textarea name="Link" placeholder="Enter  URL" required></textarea>
+                    <textarea name="Link" placeholder="Enter URL" required></textarea>
                 </td>
             </tr>
+
             <tr>
                 <td colspan="2" class="submit-btn">
                     <button type="submit">Submit Report</button>
                 </td>
             </tr>
+
         </table>
     </form>
+
 </body>
 </html>

@@ -38,6 +38,10 @@ urlpatterns = [
     path('DeleteQuiz/<int:id>', views.DeleteQuiz.as_view(), name='DeleteLink'),
 
     path('QuizResult/',views.ViewResult.as_view(), name='QuizResult'),
+    path('GenerateCertificate/<int:id>/', views.GenerateCertificate.as_view(), name='GenerateCertificate'),
+    path('GetCertificate/<int:id>/', views.GetCertificate.as_view(), name='GetCertificate'),
+
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
 
 
 
@@ -48,12 +52,21 @@ urlpatterns = [
 
     path('userregister', UserReg_api.as_view()),
     path('LoginAPI', LoginPageAPI.as_view()),
+    path('ForgotPasswordAPI', ForgetPassword.as_view()),
     path('feedback/<int:id>', ViewFeedbackAPI.as_view()),
     path('complaint/<int:id>',ViewComplaintAPI.as_view()),
     path('viewcontents', ViewContentAPI.as_view()),
     path('viewquiz', ViewQuizAPI.as_view()),
     path('submit/<int:id>', SubmitResultAPI.as_view()),
     path('ViewResult/<int:id>', ViewResultAPI.as_view()),
+    path('viewprofile/<int:id>', ViewProfileAPI.as_view()),
+    path('editprofile/<int:id>',EditProfileAPI.as_view()),
+    path('otpverification', SendOTP.as_view()),
+    path('chat-history<int:lid>',ViewChatbotHistoryAPI.as_view()),
+    path('GetCertificateAPI/<int:id>/', GetCertificateAPI.as_view())
+    
+
+
 
 
 ]

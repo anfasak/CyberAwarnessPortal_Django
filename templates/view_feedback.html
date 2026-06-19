@@ -1,77 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Feedback</title>
+{% extends "admin_home.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            padding: 40px;
-            background: #0D1117;
-            font-family: "Segoe UI", sans-serif;
-            color: white;
-        }
+{% block content %}
 
-        h2 {
-            text-align: center;
-            color: #00E5FF;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-        }
+<style>
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #1A1F25;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
-        }
+/* ===== Page Header ===== */
+.page-header {
+    width: 95%;
+    margin: 0 auto 25px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        th {
-            background: #0F1419;
-            color: #00E5FF;
-            padding: 14px;
-            font-size: 16px;
-            border-bottom: 1px solid #00E5FF33;
-        }
+.page-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #0f172a;
+}
 
-        td {
-            padding: 14px;
-            color: #E6E6E6;
-            border-bottom: 1px solid #222;
-        }
+/* ===== Table Card ===== */
+.table-wrapper {
+    width: 95%;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
 
-        tr:hover {
-            background: #11161C;
-        }
-    </style>
-</head>
+/* ===== Table ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-<body>
+thead {
+    background: #f8fafc;
+}
 
+th {
+    padding: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+td {
+    padding: 18px 16px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+tbody tr {
+    transition: 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f1f5ff;
+}
+
+/* ===== Rating Badge ===== */
+.rating-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ===== Date Styling ===== */
+.date-text {
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* ===== Empty State ===== */
+.empty-row {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* ===== Responsive ===== */
+@media(max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    th, td {
+        padding: 14px;
+        font-size: 13px;
+    }
+}
+
+</style>
+
+
+<div class="page-header">
     <h2>Feedback History</h2>
+</div>
 
+<div class="table-wrapper">
     <table>
-        <tr>
-            <th>Name</th>
-            <th>Rating</th>
-            <th>Feedback</th>
-            <th>Date</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>SI.No</th>
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Feedback</th>
+                <th>Date</th>
+            </tr>
+        </thead>
 
-        {% for i in a %}
-        <tr>
-            <td align="center">{{i.User}}</td>
-            <td align="center">{{i.Rating}}</td>
-            <td align="center">{{i.Feedback}}</td>
-            <td align="center">{{i.Date}}</td>
-        </tr>
-        {% endfor %}
-
+        <tbody>
+            {% for i in a %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.User.Name }}</td>
+                <td>
+                    <span class="rating-badge">
+                        ⭐ {{ i.Rating }}
+                    </span>
+                </td>
+                <td>{{ i.Feedback }}</td>
+                <td class="date-text">{{ i.Date }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="empty-row">
+                    No feedback available.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
+</div>
 
-</body>
-</html>
+{% endblock %}

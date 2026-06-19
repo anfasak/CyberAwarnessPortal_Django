@@ -7,32 +7,34 @@
 
     <style>
         body {
-            background: #0D1117;
+            background: #F8FAFC; /* Main BG */
             font-family: Arial, sans-serif;
-            color: white;
+            color: #020617; /* Text Dark */
             padding: 30px;
         }
 
         h2 {
             text-align: center;
-            color: #00E5FF;
+            color: #020617; /* Text Dark */
             margin-bottom: 25px;
         }
 
         .container {
             max-width: 700px;
             margin: auto;
-            background: #161B22;
+            background: #FFFFFF; /* Card */
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,229,255,0.25);
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
         }
 
         label {
             margin-top: 12px;
             display: block;
             font-size: 14px;
-            color: #C9D1D9;
+            color: #020617; /* Text Dark */
+            font-weight: 600;
         }
 
         input, textarea, select, button {
@@ -40,14 +42,19 @@
             padding: 10px;
             margin-top: 6px;
             border-radius: 6px;
-            border: none;
             font-size: 14px;
         }
 
         input, textarea, select {
-            background: #0D1117;
-            color: white;
-            border: 1px solid #00E5FF55;
+            background: #FFFFFF;
+            color: #020617; /* Text Dark */
+            border: 1px solid #CBD5E1;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #0EA5E9; /* Primary */
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
         }
 
         textarea {
@@ -56,16 +63,17 @@
         }
 
         button {
-            background: #00E5FF;
-            color: black;
+            background: #0EA5E9; /* Primary */
+            color: #FFFFFF;
             font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
+            border: none;
             transition: 0.3s;
         }
 
         button:hover {
-            background: #00c8e0;
+            background: #0284C7;
         }
     </style>
 </head>
@@ -76,7 +84,7 @@
 <div class="container">
     <form method="post">
         <label>Question</label>
-        <textarea  name="question" placeholder="Enter quiz question"></textarea>
+        <textarea name="question" placeholder="Enter quiz question"></textarea>
 
         <label>Option A</label>
         <input type="text" name="option1" placeholder="Option A">
@@ -90,10 +98,10 @@
         <label>Answer</label>
         <input type="text" name="answer" placeholder="answer">
 
-    
         <button type="submit">Add Question</button>
     </form>
 </div>
 
 </body>
 </html>
+ 
